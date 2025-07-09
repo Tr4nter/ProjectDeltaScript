@@ -117,7 +117,7 @@ if string.match(exec, "Synapse") == nil
     end)
     if libtest == false then
         Notify("Ardour", "Wait while we install drawing lib for you")
-        local lib = game:HttpGet("https://drive.google.com/uc?export=download&id=1xDwhcJeZMMaGsOhRTM1oZw0TgklkDIwP")
+        local lib = game:HttpGet("https://raw.githubusercontent.com/Tr4nter/ProjectDeltaScript/refs/heads/main/espfix.lua")
         loadstring(lib)()
         Notify("Ardour", "Drawing lib installed!, Script is loading")
     else
@@ -160,6 +160,7 @@ local configname = nil
 allvars = {}
 
 allvars.aimbool = false
+allvars.shootAtPredicted = false
 local fakemodels = {}
 allvars.aimbots = false
 allvars.aimvischeck = false
@@ -621,7 +622,7 @@ task.delay(8, function()
     end
 end)
 
-libstring = fetchgui('https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/Library.lua')
+libstring = fetchgui('https://raw.githubusercontent.com/Tr4nter/ProjectDeltaScript/refs/heads/main/Library.lua')
 themestring = fetchgui('https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/ThemeManager.lua')
 savestring = fetchgui('https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua')
 
@@ -710,6 +711,15 @@ aim:AddToggle('PredictMovement', {
     Tooltip = 'Predict enemy movement and shoot at the exact same time the enemy is about to peek/you peeking into them',
     Callback = function(v)
         allvars.predict = v
+    end
+})
+aim:AddToggle("Shoot At Predicted", {
+    Text = 'Shoot At Predicted',
+    Default = false,
+    Tooltip = 'Shoots at predicted position of target instead of current position taking target velocity into account, recommended to be used with "Predict Movement" option',
+    Callback = function(v)
+        allvars.shootAtPredicted = v
+        
     end
 })
 aim:AddSlider('TriggerBotDelay', {
@@ -3094,7 +3104,11 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
 
         if target ~= nil and aimtargetpart ~= nil then
             target_part = aimtargetpart
-            v_u_103 = CFrame.new(v_u_115, target_part.Position + target_part.AssemblyLinearVelocity * _chooseTargetDelta).LookVector
+            if not allvars.shootAtPredicted then
+                v_u_103 = CFrame.new(v_u_115, target_part.Position).LookVector
+            else
+                v_u_103 = CFrame.new(v_u_115, target_part.Position + target_part.AssemblyLinearVelocity * _chooseTargetDelta).LookVector
+            end
             v_u_114 = v_u_103
         else
             target_part = aimpart
