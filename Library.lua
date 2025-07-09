@@ -1286,6 +1286,7 @@ do
 
         Library:GiveSignal(InputService.InputBegan:Connect(function(Input, proc)
             if proc then return end
+            print("Hi", proc)
             if (not Picking) then
                 if KeyPicker.Mode == 'Toggle' then
                     local Key = KeyPicker.Value;
