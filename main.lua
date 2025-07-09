@@ -2787,7 +2787,7 @@ function isvisible(char, object, predict)
     end
 	local origin 
 	if predict then
-		origin = localplayer.Character.HumanoidRootPart.Position + Vector3.new(0, 1.5, 0) + localplayer.Character.HumanoidRootPart.AssemblyLinearVelocity * _choseTargetDelta
+		origin = localplayer.Character.HumanoidRootPart.Position + Vector3.new(0, 1.5, 0) + localplayer.Character.HumanoidRootPart.AssemblyLinearVelocity * _chooseTargetDelta
 	else 
 	    origin = localplayer.Character.HumanoidRootPart.Position + Vector3.new(0, 1.5, 0)
 	end
