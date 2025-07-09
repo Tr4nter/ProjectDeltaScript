@@ -2776,6 +2776,7 @@ end
 v311 = require(game.ReplicatedStorage.Modules:WaitForChild("UniversalTables"))
 globalist11 = v311.ReturnTable("GlobalIgnoreListProjectile")
 
+local _chooseTargetDelta = 0
 function isvisible(char, object, predict)
 	local predict = predict or false
     if not localplayer.Character or not localplayer.Character:FindFirstChild("HumanoidRootPart") then
@@ -2786,7 +2787,7 @@ function isvisible(char, object, predict)
     end
 	local origin 
 	if predict then
-		origin = localplayer.Character.HumanoidRootPart.Position + Vector3.new(0, 1.5, 0) + localplayer.Character.HumanoidRootPart.AssemblyLinearVelocity
+		origin = localplayer.Character.HumanoidRootPart.Position + Vector3.new(0, 1.5, 0) + localplayer.Character.HumanoidRootPart.AssemblyLinearVelocity * _choseTargetDelta
 	else 
 	    origin = localplayer.Character.HumanoidRootPart.Position + Vector3.new(0, 1.5, 0)
 	end
@@ -2840,7 +2841,6 @@ function isvisible(char, object, predict)
 
     return false
 end
-local _chooseTargetDelta = 0
 function choosetarget(delta)
     _chooseTargetDelta = delta
     local cent = Vector2.new(wcamera.ViewportSize.X / 2, wcamera.ViewportSize.Y / 2)
