@@ -3227,7 +3227,7 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
                         task.spawn(function()
                             runhitmark(v140)
                         end)
-                        if _recordedBlinkPos then
+                        if _recordedBlinkPos and allvars.peekblink then
                             localplayer.Character.HumanoidRootPart.CFrame = _recordedBlinkPos 
                         end
                         _recordedBlinkPos = nil
