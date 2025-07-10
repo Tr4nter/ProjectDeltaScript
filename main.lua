@@ -3187,13 +3187,15 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
 
                     local v171 = v_u_4:FindDeepAncestor(v137, "Model")
                     if v171:FindFirstChild("Humanoid") then -- if hit target
+                        local pre =game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos")
                         local oldIdentity = getthreadidentity() 
                         setthreadidentity(7)
                         peekBlinkToggle:SetValue(false)
+                        allvars.peekblink = false
                         setthreadidentity(oldIdentity)
+                        repeat runs.RenderStepped:Wait() until game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos") ~= pre 
                         local ran = math.random(1, 100)
                         local ranbool = ran <= allvars.aimchance
-                        print(game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos"))
 
                         if ranbool then
 							
@@ -3223,11 +3225,14 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
                             v_u_5:FireServer(aimpart, v175, v_u_108, hittick)
                         end
                         tracerendpos = v140
-                        runs.RenderStepped:Wait()
                         task.spawn(function()
                             runhitmark(v140)
                         end)
-                        if _recordedBlinkPos and allvars.peekblink then
+                        if _recordedBlinkPos  then
+                            local stats = game:GetService("Stats")
+                            local network = stats:FindFirstChild("Network")
+                            local pingStat = network and network.ServerStatsItem:FindFirstChild("Ping")
+                            task.wait(pingStat and pingStat:GetValue() / 1000 or 0.1)
                             localplayer.Character.HumanoidRootPart.CFrame = _recordedBlinkPos 
                         end
                         _recordedBlinkPos = nil
