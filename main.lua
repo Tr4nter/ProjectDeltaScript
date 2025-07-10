@@ -1983,7 +1983,7 @@ speedh:AddLabel('Color'):AddColorPicker('DesyncColor', {
 })
 local _recordedBlinkPos = nil 
 speedh:AddDivider()
-speedh:AddToggle('Peek Blink' , {
+local peekBlinkToggle = speedh:AddToggle('Peek Blink' , {
     Text = 'Peek Blink',
     Default = false,
     Tooltip = 'Enables peek blink',
@@ -2035,7 +2035,8 @@ speedh:AddToggle('Peek Blink' , {
             beam:Destroy()
         end
     end
-}):AddKeyPicker('Blink', {
+})
+peekBlinkToggle:AddKeyPicker('Blink', {
     Default = 'U',
     SyncToggleState = true,
     Mode = 'Toggle', --Always, Toggle, Hold
@@ -3186,7 +3187,7 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
 
                     local v171 = v_u_4:FindDeepAncestor(v137, "Model")
                     if v171:FindFirstChild("Humanoid") then -- if hit target
-                        allvars.peekblink = false
+                        peekBlinkToggle:SetValue(false)
                         local ran = math.random(1, 100)
                         local ranbool = ran <= allvars.aimchance
                         print(game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos"))
@@ -3223,7 +3224,10 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
                         task.spawn(function()
                             runhitmark(v140)
                         end)
-                        localplayer.Character.HumanoidRootPart.CFrame = _recordedBlinkPos or localplayer.Character.HumanoidRootPart.CFrame
+                        if _recordedBlinkPos then
+                            localplayer.Character.HumanoidRootPart.CFrame = _recordedBlinkPos 
+                        end
+                        _recordedBlinkPos = nil
 
                         print(game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos"))
                         
