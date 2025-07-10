@@ -3109,6 +3109,16 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
             else
                 v_u_103 = CFrame.new(v_u_115, target_part.Position + target_part.AssemblyLinearVelocity * _chooseTargetDelta).LookVector
             end
+            if allvars.aimfakewait then
+                local predictedPos = v_u_103
+                for i =1, 3 do
+                    local toTarget = predictedPos - v_u_115
+                    local estTime = toTarget.Magnitude / bulletspeed    
+                    predictedPos = target_part.Position + target_part.AssemblyLinearVelocity * estTime
+                end
+                v_u_103 = CFrame.new(v_u_115, predictedPos).LookVector
+
+            end
             v_u_114 = v_u_103
         else
             target_part = aimpart
@@ -3184,7 +3194,6 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
                         return
                     end
 
-                    tracerendpos = v140
 
                     local v171 = v_u_4:FindDeepAncestor(v137, "Model")
                     if v171:FindFirstChild("Humanoid") then -- if hit target
@@ -3218,6 +3227,7 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
                             
                             v_u_5:FireServer(aimpart, v175, v_u_108, hittick)
                         end
+                        tracerendpos = v140
 
                         task.spawn(function()
                             runhitmark(v140)
