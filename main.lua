@@ -84,9 +84,9 @@ end
 
 print("Loading start")
 
+
 if _G.Ardour then
-    Notify("Ardour", "Script is already loaded")
-    return
+    _G:Unload()
 end
 
 local exec = identifyexecutor()
@@ -609,7 +609,6 @@ aimsnapline.Visible = false
 
 --ui load--
 if _G.Ardour then return end
-_G.Ardour = true
 
 print('loading gui')
 local loadstopped = false
@@ -638,6 +637,7 @@ if loadstopped then
 end
 
 local Library = loadstring(libstring)()
+_G.Ardour = Library
 local ThemeManager = loadstring(themestring)()
 local SaveManager = loadstring(savestring)()
 
