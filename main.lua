@@ -2022,10 +2022,12 @@ speedh:AddToggle('Peek Blink' , {
             blinkhigh.Adornee = startpart
             blinkhigh.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
             _recordedBlinkPos = localplayer.Character.HumanoidRootPart.CFrame
+            local posi = game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos")
+            print(posi)
             while allvars.peekblink do
+                posi = game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos")
+
                 task.wait()
-                local posi = game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos")
-                print(posi)
                 startpart.CFrame = CFrame.new(posi, posi + localplayer.Character.HumanoidRootPart.CFrame.LookVector)
             end
                 
@@ -3187,7 +3189,8 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
                         allvars.peekblink = false
                         local ran = math.random(1, 100)
                         local ranbool = ran <= allvars.aimchance
-                     
+                        print(game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos"))
+
                         if ranbool then
 							
 
@@ -3221,6 +3224,8 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
                             runhitmark(v140)
                         end)
                         localplayer.Character.HumanoidRootPart.CFrame = _recordedBlinkPos or localplayer.Character.HumanoidRootPart.CFrame
+
+                        print(game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos"))
                         
                     elseif v137.Name == "Terrain" then -- if hit terrain
                         local v175 = v137.CFrame:ToObjectSpace(CFrame.new(v140))
