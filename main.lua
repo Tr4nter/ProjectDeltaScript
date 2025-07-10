@@ -86,7 +86,7 @@ print("Loading start")
 
 
 if _G.Ardour then
-    _G:Unload()
+    _G.Ardour:Unload()
 end
 
 local exec = identifyexecutor()
