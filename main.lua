@@ -179,6 +179,7 @@ local showkdr = false
 local showdist = false
 local targetinfoskip = false
 allvars.aimdynamicfov = false
+allvars.peekblink = false
 allvars.aimpart = "Head"
 allvars.aimfov = 150
 local aimsnapline = Drawing.new("Line") 
@@ -1980,18 +1981,17 @@ speedh:AddLabel('Color'):AddColorPicker('DesyncColor', {
         desynccolor = a
     end
 })
+local _recordedBlinkPos = nil 
 speedh:AddDivider()
-speedh:AddLabel('Blink'):AddKeyPicker('Blink', {
-    Default = 'U',
-    SyncToggleState = false,
-    Mode = 'Toggle', --Always, Toggle, Hold
-    Text = 'Blink',
-    NoUI = false, 
+speedh:AddToggle('Peek Blink' , {
+    Text = 'Peek Blink',
+    Default = false,
+    Tooltip = 'Enables peek blink',
     Callback = function(v)
-        blinkbool = v
+        allvars.peekblink = v
 
         if v then
-            local beam = Instance.new("Beam")
+          local beam = Instance.new("Beam")
             beam.Name = "LineBeam"
             beam.Parent = game.Workspace
             local startpart = Instance.new("Part")
@@ -2021,41 +2021,27 @@ speedh:AddLabel('Blink'):AddKeyPicker('Blink', {
             blinkhigh.OutlineTransparency = 1
             blinkhigh.Adornee = startpart
             blinkhigh.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-    
-            while blinkbool do
+            _recordedBlinkPos = localplayer.Character.HumanoidRootPart.CFrame
+            while allvars.peekblink do
                 task.wait()
                 local posi = game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos")
+                print(posi)
                 startpart.CFrame = CFrame.new(posi, posi + localplayer.Character.HumanoidRootPart.CFrame.LookVector)
             end
-            if blinknoclip then
-                for i=1,10 do
-                    localplayer.Character.HumanoidRootPart.CFrame = blinktable[1]
-                end
-            end
-    
+                
             startpart:Destroy()
             beam:Destroy()
         end
-    end,
-    ChangedCallback = function(New)
     end
+}):AddKeyPicker('Blink', {
+    Default = 'U',
+    SyncToggleState = true,
+    Mode = 'Toggle', --Always, Toggle, Hold
+    Text = 'Blink',
+    NoUI = false, 
+   
 })
-speedh:AddToggle('Update Blink on Stop', {
-    Text = 'Update blink on stop',
-    Default = false,
-    Tooltip = 'Updates blink position when stopping',
-    Callback = function(v)
-        blinkstop = v
-    end
-})
-speedh:AddToggle('Blinknoclip', {
-    Text = 'Blink noclip',
-    Default = false,
-    Tooltip = 'Noclip while blink',
-    Callback = function(v)
-        blinknoclip = v
-    end
-})
+
 speedh:AddDivider()
 speedh:AddToggle('Edit Upangle', {
     Text = 'Edit upangle',
@@ -3198,6 +3184,7 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
 
                     local v171 = v_u_4:FindDeepAncestor(v137, "Model")
                     if v171:FindFirstChild("Humanoid") then -- if hit target
+                        allvars.peekblink = false
                         local ran = math.random(1, 100)
                         local ranbool = ran <= allvars.aimchance
                      
@@ -3229,10 +3216,12 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
                             v_u_5:FireServer(aimpart, v175, v_u_108, hittick)
                         end
                         tracerendpos = v140
-
+                        runs.RenderStepped:Wait()
                         task.spawn(function()
                             runhitmark(v140)
                         end)
+                        localplayer.Character.HumanoidRootPart.CFrame = _recordedBlinkPos or localplayer.Character.HumanoidRootPart.CFrame
+                        
                     elseif v137.Name == "Terrain" then -- if hit terrain
                         local v175 = v137.CFrame:ToObjectSpace(CFrame.new(v140))
                         v_u_5:FireServer(v137, v175, v_u_108, hittick)
@@ -5274,38 +5263,43 @@ runs.Heartbeat:Connect(function(dt) --resolver
     end
 end)
 runs.Heartbeat:Connect(function(delta) --blink
-    if blinkbool and localplayer.Character and localplayer.Character.HumanoidRootPart then
-        local hrp = localplayer.Character.HumanoidRootPart
+    if not allvars.peekblink then return end
+    local hrp = localplayer.Character.HumanoidRootPart
 
-        if blinkstop and localplayer.Character.Humanoid.MoveDirection.Magnitude == 0 then return end
-        if blinknoclip then
-            localplayer.Character.HumanoidRootPart.CanCollide = false
-            localplayer.Character.Head.CanCollide = false
-            localplayer.Character.UpperTorso.CanCollide = false
-            localplayer.Character.LowerTorso.CanCollide = false
-            workspace.Gravity = 0.1
-        end
-        blinktable[1] = hrp.CFrame
-        blinktable[2] = hrp.AssemblyLinearVelocity
+    blinktable[1] = hrp.CFrame
+    blinktable[2] = hrp.AssemblyLinearVelocity
+    hrp.Anchored = true
+    runs.RenderStepped:Wait()
+    hrp.Anchored = false
 
-        if aimresolver then return end
+    hrp.CFrame = blinktable[1]
+    hrp.AssemblyLinearVelocity = blinktable[2]
+    -- if blinkbool and localplayer.Character and localplayer.Character.HumanoidRootPart then
 
-        if not blinktemp then
-            hrp.Anchored = true
-            blinktable[3] = hrp.CFrame
-            runs.RenderStepped:Wait()
-            hrp.Anchored = false
-            hrp.CFrame = blinktable[1]
-            hrp.AssemblyLinearVelocity = blinktable[2]
-        else
-            hrp.CFrame = blinktable[1]
-        end
-    elseif blinknoclip and localplayer.Character and localplayer.Character.HumanoidRootPart then
-        localplayer.Character.HumanoidRootPart.CanCollide = true
-        localplayer.Character.Head.CanCollide = true
-        localplayer.Character.UpperTorso.CanCollide = true
-        localplayer.Character.LowerTorso.CanCollide = true
-    end
+    --     if blinkstop and localplayer.Character.Humanoid.MoveDirection.Magnitude == 0 then return end
+    --     if blinknoclip then
+    --         localplayer.Character.HumanoidRootPart.CanCollide = false
+    --         localplayer.Character.Head.CanCollide = false
+    --         localplayer.Character.UpperTorso.CanCollide = false
+    --         localplayer.Character.LowerTorso.CanCollide = false
+    --         workspace.Gravity = 0.1
+    --     end
+
+    --     if aimresolver then return end
+
+    --     if not blinktemp then
+    --         hrp.Anchored = true
+    --         runs.RenderStepped:Wait()
+    --         hrp.Anchored = false
+    --     else
+    --         hrp.CFrame = blinktable[1]
+    --     end
+    -- elseif blinknoclip and localplayer.Character and localplayer.Character.HumanoidRootPart then
+    --     localplayer.Character.HumanoidRootPart.CanCollide = true
+    --     localplayer.Character.Head.CanCollide = true
+    --     localplayer.Character.UpperTorso.CanCollide = true
+    --     localplayer.Character.LowerTorso.CanCollide = true
+    -- end
 end)
 runs.RenderStepped:Connect(function(delta) -- global fast
     if not localplayer.Character or not localplayer.Character:FindFirstChild("HumanoidRootPart") or not localplayer.Character:FindFirstChild("Humanoid") then
@@ -5767,3 +5761,4 @@ Library:Toggle()
 
 print("loaded")
 Library:Notify("Ardour", "Script loaded")
+
