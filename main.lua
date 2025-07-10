@@ -3187,7 +3187,10 @@ aimmodfunc = function(prikol, p49, p50, p_u_51, aimpart, _, p52, p53, p54)
 
                     local v171 = v_u_4:FindDeepAncestor(v137, "Model")
                     if v171:FindFirstChild("Humanoid") then -- if hit target
+                        local oldIdentity = getthreadidentity() 
+                        setthreadidentity(7)
                         peekBlinkToggle:SetValue(false)
+                        setthreadidentity(oldIdentity)
                         local ran = math.random(1, 100)
                         local ranbool = ran <= allvars.aimchance
                         print(game.ReplicatedStorage.Players:FindFirstChild(localplayer.Name).Status.UAC:GetAttribute("LastVerifiedPos"))
