@@ -5526,7 +5526,7 @@ runs.RenderStepped:Connect(function(delta) -- global fast
     if allvars.invcheck and invtarget ~= nil then
         local profile = game.ReplicatedStorage.Players:FindFirstChild(invtarget.Name)
         if profile then
-            local cloth = profile.Clothing
+            
             local inv = profile.Inventory
             local result = ""
             
@@ -5534,37 +5534,7 @@ runs.RenderStepped:Connect(function(delta) -- global fast
             for _, item in pairs(inv:GetChildren()) do
                 result = result .. item.Name .. ",\n"
             end
-            result = result .. "--CLOTHING--\n"
-            for _, item in pairs(cloth:GetChildren()) do
-                local itemName = item.Name
-                local inventory = item:FindFirstChild("Inventory")
-    
-                if inventory then
-                    result = result .. itemName .. " = {\n"
-                    local count = 0
-                    for _, invItem in pairs(inventory:GetChildren()) do
-                        local invcount = invItem.ItemProperties:GetAttribute("Amount")
-                        count = count + 1
-                        if count % 2 == 0 then
-                            if invcount and invcount > 1 then
-                                result = result .. " " .. invItem.Name .."[x".. invcount .."]".. ","
-                            else
-                                result = result .. " " .. invItem.Name .. ","
-                            end
-                            result = result .. "\n"
-                        else
-                            if invcount and invcount > 1 then
-                                result = result .. "    " .. invItem.Name .."[x".. invcount .."]".. ","
-                            else
-                                result = result .. "    " .. invItem.Name .. ","
-                            end
-                        end
-                    end
-                    result = result:sub(1, -2) .. "\n},\n"
-                else
-                    result = result .. itemName .. ",\n"
-                end
-            end
+            
 
             result = result:sub(1, -3)
             result = invtarget.Name.."'s inventory:\n" .. result
